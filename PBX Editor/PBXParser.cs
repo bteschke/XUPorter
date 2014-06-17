@@ -46,12 +46,6 @@ namespace UnityEditor.XCodeEditor
 
 		public string ResolveName( string guid )
 		{
-			
-			if (!this.objects.ContainsKey(guid)) {
-				Debug.LogWarning(this + " ResolveName could not resolve " + guid);
-				return string.Empty; //"UNRESOLVED GUID:" + guid;
-			}
-			
 			object entity = this.objects[ guid ];
 
 			if( entity is PBXBuildFile )
@@ -92,52 +86,15 @@ namespace UnityEditor.XCodeEditor
 			{
 				return "CopyFiles";
 			}
-			else if( entity is XCConfigurationList )
-			{
-				XCConfigurationList casted = (XCConfigurationList)entity;
-				//Debug.LogWarning ("XCConfigurationList " + guid + " " + casted.ToString());
-				
-				if( casted.data.ContainsKey( "defaultConfigurationName" ) ) {
-					//Debug.Log ("XCConfigurationList " + (string)casted.data[ "defaultConfigurationName" ] + " " + guid);
-					return (string)casted.data[ "defaultConfigurationName" ];
-				}
-
-				return null;
-			}
-			else if( entity is PBXNativeTarget )
-			{
-				PBXNativeTarget obj = (PBXNativeTarget)entity;
-				//Debug.LogWarning ("PBXNativeTarget " + guid + " " + obj.ToString());
-				
-				if( obj.data.ContainsKey( "name" ) ) {
-					//Debug.Log ("PBXNativeTarget " + (string)obj.data[ "name" ] + " " + guid);
-					return (string)obj.data[ "name" ];
-				}
-
-				return null;
-			}
-			else if( entity is XCBuildConfiguration )
-			{
-				XCBuildConfiguration obj = (XCBuildConfiguration)entity;
-				//Debug.LogWarning ("XCBuildConfiguration UNRESOLVED GUID:" + guid + " " + (obj==null?"":obj.ToString()));
-
-				if( obj.data.ContainsKey( "name" ) ) {
-					//Debug.Log ("XCBuildConfiguration " + (string)obj.data[ "name" ] + " " + guid + " " + (obj==null?"":obj.ToString()));
-					return (string)obj.data[ "name" ];
-				}
-				
-			}
 			else if( entity is PBXObject )
 			{
 				PBXObject obj = (PBXObject)entity;
 
-				if( obj.data.ContainsKey( "name" ) )
-					Debug.Log ("PBXObject " + (string)obj.data[ "name" ] + " " + guid + " " + (obj==null?"":obj.ToString()));
+				if( obj.ContainsKey( "name" ) )
 					return (string)obj.data[ "name" ];
 			}
 
 			//return "UNRESOLVED GUID:" + guid;
-			Debug.LogWarning ("UNRESOLVED GUID:" + guid);
 			return null;
 		}
 
@@ -159,11 +116,8 @@ namespace UnityEditor.XCodeEditor
 						{
 							object parent = this.objects[ parent_guid ];
 
-							if( parent is PBXBuildPhase ) {
-								string ret = ResolveName( ((PBXBuildPhase)parent).guid );
-								//Debug.Log ("ResolveBuildPhaseNameForFile = " + ret);
-								return ret;
-							}
+							if( parent is PBXBuildPhase )
+								return ResolveName( ((PBXBuildPhase)parent).guid );
 						}
 					}
 				}
@@ -176,7 +130,7 @@ namespace UnityEditor.XCodeEditor
 
 	public class PBXParser
 	{
-		public const string PBX_HEADER_TOKEN = "// !$*UTF8*$!\n";
+		public const string PBX_HEADER_TOKEN = "// !$*UTF8*$!";
 		public const char WHITESPACE_SPACE = ' ';
 		public const char WHITESPACE_TAB = '\t';
 		public const char WHITESPACE_NEWLINE = '\n';
@@ -208,7 +162,7 @@ namespace UnityEditor.XCodeEditor
 				return null;
 			}
 
-			data = data.Substring( 13 );
+			data = data.Substring( 12 );
 			this.data = data.ToCharArray();
 			index = 0;
 
@@ -267,17 +221,12 @@ namespace UnityEditor.XCodeEditor
 			//Debug.Log( "RESOLVE " + guid + ": " + filename + " in " + location );
 
 			if( filename != null ) {
-				if( location != null ) {
-					//Debug.Log( "GUIDComment " + guid + " " + String.Format( " /* {0} in {1} */", filename, location )  );
+				if( location != null )
 					builder.Append( String.Format( " /* {0} in {1} */", filename, location ) );
-				} else {
-					//Debug.Log( "GUIDComment " + guid + " " + String.Format( " /* {0} */", filename) );
+				else
 					builder.Append( String.Format( " /* {0} */", filename) );
-				}
+
 				return true;
-			} else {
-				//string other = this.resolver.ResolveConfigurationNameForFile( guid );
-				Debug.Log ("GUIDComment " + guid + " [no filename]");	
 			}
 
 			return false;
@@ -537,7 +486,6 @@ namespace UnityEditor.XCodeEditor
 
 				// VALUE
 				// do not pretty-print PBXBuildFile or PBXFileReference as Xcode does
-				//Debug.Log ("about to serialize " + pair.Value.GetType () + " " + pair.Value);
 				SerializeValue( pair.Value, builder, ( readable &&
 					( pair.Value.GetType() != typeof( PBXBuildFile ) ) &&
 					( pair.Value.GetType() != typeof( PBXFileReference ) )
@@ -591,7 +539,6 @@ namespace UnityEditor.XCodeEditor
 
 		private bool SerializeString( string aString, StringBuilder builder, bool useQuotes = false, bool readable = false )
 		{
-			//Debug.Log ("SerializeString " + aString);
 			// Is a GUID?
 			// Note: Unity3d generates mixed-case GUIDs, Xcode use uppercase GUIDs only.
 			if( Regex.IsMatch( aString, @"^[A-Fa-f0-9]{24}$" ) ) {

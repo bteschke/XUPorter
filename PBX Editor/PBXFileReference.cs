@@ -31,13 +31,13 @@ namespace UnityEditor.XCodeEditor
 			{ ".cpp", "sourcecode.cpp.cpp" },
 			{ ".framework", "wrapper.framework" },
 			{ ".h", "sourcecode.c.h" },
-			{ ".pch", "sourcecode.c.h" },
 			{ ".icns", "image.icns" },
 			{ ".m", "sourcecode.c.objc" },
 			{ ".mm", "sourcecode.cpp.objcpp" },
 			{ ".nib", "wrapper.nib" },
 			{ ".plist", "text.plist.xml" },
 			{ ".png", "image.png" },
+			{ ".jpg", "image.jpg" },
 			{ ".rtf", "text.rtf" },
 			{ ".tiff", "image.tiff" },
 			{ ".txt", "text" },
@@ -56,13 +56,13 @@ namespace UnityEditor.XCodeEditor
 			{ ".cpp", "PBXSourcesBuildPhase" },
 			{ ".framework", "PBXFrameworksBuildPhase" },
 			{ ".h", null },
-			{ ".pch", null },
 			{ ".icns", "PBXResourcesBuildPhase" },
 			{ ".m", "PBXSourcesBuildPhase" },
 			{ ".mm", "PBXSourcesBuildPhase" },
 			{ ".nib", "PBXResourcesBuildPhase" },
 			{ ".plist", "PBXResourcesBuildPhase" },
 			{ ".png", "PBXResourcesBuildPhase" },
+			{ ".jpg", "PBXResourcesBuildPhase" },
 			{ ".rtf", "PBXResourcesBuildPhase" },
 			{ ".tiff", "PBXResourcesBuildPhase" },
 			{ ".txt", "PBXResourcesBuildPhase" },
@@ -78,7 +78,6 @@ namespace UnityEditor.XCodeEditor
 			
 		}
 		
-		//TODO see if XCode has a preference for ordering these attributes
 		public PBXFileReference( string filePath, TreeEnum tree = TreeEnum.SOURCE_ROOT ) : base()
 		{
 			this.Add( PATH_KEY, filePath );

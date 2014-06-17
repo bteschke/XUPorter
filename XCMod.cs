@@ -6,17 +6,15 @@ namespace UnityEditor.XCodeEditor
 {
 	public class XCMod 
 	{
-		private Hashtable _datastore = new Hashtable();
-		private ArrayList _libs = new ArrayList();
+		private Hashtable _datastore;
+		private ArrayList _libs;
 		
 		public string name { get; private set; }
 		public string path { get; private set; }
 		
 		public string group {
 			get {
-				if (_datastore != null && _datastore.Contains("group"))
-					return (string)_datastore["group"];
-				return string.Empty;
+				return (string)_datastore["group"];
 			}
 		}
 		
@@ -68,12 +66,6 @@ namespace UnityEditor.XCodeEditor
 			}
 		}
 
-		public ArrayList compiler_flags {
-			get {
-				return (ArrayList)_datastore["compiler_flags"];
-			}
-		}
-
 		public ArrayList linker_flags {
 			get {
 				return (ArrayList)_datastore["linker_flags"];
@@ -91,12 +83,7 @@ namespace UnityEditor.XCodeEditor
 			path = System.IO.Path.GetDirectoryName( filename );
 			
 			string contents = projectFileInfo.OpenText().ReadToEnd();
-			//Debug.Log (contents);
 			_datastore = (Hashtable)XUPorterJSON.MiniJSON.jsonDecode( contents );
-			if (_datastore == null || _datastore.Count == 0) {
-				Debug.Log (contents);
-				throw new UnityException("Parse error in file " + System.IO.Path.GetFileName(filename) + "! Check for typos such as unbalanced quotation marks, etc.");
-			}
 		}
 	}
 

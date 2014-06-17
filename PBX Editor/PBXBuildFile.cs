@@ -41,8 +41,6 @@ namespace UnityEditor.XCodeEditor
 					
 					settings = new PBXDictionary();
 					settings.Add( ATTRIBUTES_KEY, attributes );
-
-					_data.Add( SETTINGS_KEY, settings );
 				}
 				return true;
 			}
